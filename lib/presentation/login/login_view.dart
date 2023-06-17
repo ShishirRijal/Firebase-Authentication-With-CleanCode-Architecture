@@ -1,41 +1,152 @@
-import 'package:flutter/material.dart';
+import 'package:clothing_store/presentation/resources/asset_manager.dart';
 
+import 'login_bloc/login_bloc.dart';
+import 'login_bloc/login_state.dart';
+import '../resources/resources.dart';
 import '../shared_widgets/shared_widgets.dart';
+import 'package:flutter/gestures.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:formz/formz.dart';
+import 'login_bloc/login_event.dart';
 
 class LoginView extends StatelessWidget {
   const LoginView({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        // dismiss keyboard when touched outside the textfield
-        FocusManager.instance.primaryFocus?.unfocus();
-      },
-      child: Scaffold(
+    return BlocProvider(
+      create: (_) => LoginBloc(),
+      child: GestureDetector(
+        onTap: () {
+          // dismiss keyboard when touched outside the textfield
+          FocusManager.instance.primaryFocus?.unfocus();
+        },
+        child: Scaffold(
           backgroundColor: Colors.white,
           body: SafeArea(
             child: SingleChildScrollView(
               child: Padding(
                 padding: const EdgeInsets.symmetric(
                     vertical: 40.0, horizontal: 20.0),
-                child: Column(
-                  children: const [
-                    Logo(),
-                    SizedBox(height: 20.0),
-                    _LoginText(),
-                    SizedBox(height: 20.0),
-                    _InputAndLogin(),
-                  ],
-                ),
+                child: _LoginForm(),
               ),
             ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _LoginForm extends StatefulWidget {
+  @override
+  State<_LoginForm> createState() => _LoginFormState();
+}
+
+class _LoginFormState extends State<_LoginForm> {
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocListener<LoginBloc, LoginState>(
+      listener: (context, state) {
+        if (state.status.isSuccess) {
+          ScaffoldMessenger.of(context).hideCurrentSnackBar();
+          showDialog<void>(
+            context: context,
+            builder: (_) => const SuccessDialog(),
+          );
+        }
+        if (state.status.isInProgress) {
+          ScaffoldMessenger.of(context)
+            ..hideCurrentSnackBar()
+            ..showSnackBar(
+              const SnackBar(content: Text('Submitting...')),
+            );
+        }
+      },
+      child: Padding(
+        padding: const EdgeInsets.all(8),
+        child: Column(
+          children: const <Widget>[
+            Logo(),
+            SizedBox(height: 20.0),
+            _LoginText(),
+            SizedBox(height: 20.0),
+            EmailInput(),
+            SizedBox(height: 20.0),
+            PasswordInput(),
+            ForgotPassword(),
+            SizedBox(height: 50.0),
+            LoginButton(),
+            SizedBox(height: 30),
+            SignUp(),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class ForgotPassword extends StatelessWidget {
+  const ForgotPassword({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Align(
+      alignment: Alignment.topRight,
+      child: TextButton(
+          onPressed: () {
+            // Navigator.pushNamed(context, Routes.forgotPasswordRoute);
+          },
+          child: Text(
+            "Forgot password?",
+            style: Theme.of(context)
+                .textTheme
+                .bodyText1!
+                .copyWith(color: ColorManager.accent),
           )),
     );
   }
 }
 
-// Refactoring the code....
+class SignUp extends StatelessWidget {
+  const SignUp({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return RichText(
+        text: TextSpan(
+      children: [
+        TextSpan(
+          text: "Don't have an account yet? ",
+          style: getRegularTextStyle(),
+        ),
+        TextSpan(
+          text: "Sign Up",
+          recognizer: TapGestureRecognizer()
+            ..onTap = () {
+              // go to register screen
+            },
+          style: getRegularTextStyle(color: ColorManager.accent),
+        ),
+      ],
+    ));
+  }
+}
 
 class Logo extends StatelessWidget {
   const Logo({
@@ -44,9 +155,9 @@ class Logo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const SizedBox(
-      height: 120.0,
-      child: Placeholder(),
+    return SizedBox(
+      height: 200.0,
+      child: Image.asset(AssetManager.logo),
       // child: LottieBuilder.asset(
       //   AssetManager.logoJson,
       //   fit: BoxFit.cover,
@@ -66,98 +177,112 @@ class _LoginText extends StatelessWidget {
       alignment: Alignment.centerLeft,
       child: Text(
         "Login",
-        style: Theme.of(context).textTheme.headline1,
+        style: getBoldTextStyle(),
       ),
     );
   }
 }
 
-class _InputAndLogin extends StatelessWidget {
-  const _InputAndLogin({Key? key}) : super(key: key);
+class EmailInput extends StatelessWidget {
+  const EmailInput({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        // Input Fields
-
-        // email
-        CustomTextField(
+    return BlocBuilder<LoginBloc, LoginState>(
+      builder: (context, state) {
+        return CustomTextField(
+          initialValue: state.email.value,
+          label: 'Email',
+          hintText: 'Eg: shishir@gmail.com',
+          errorText:
+              state.email.displayError != null ? 'Enter a valid email' : null,
           icon: Icons.email,
-          label: "E-mail",
-          errorText: '',
           onChange: (value) {
-            // loginAuth.setEmail(value.trim());
+            context.read<LoginBloc>().add(EmailChanged(email: value));
           },
-        ),
-        const SizedBox(height: 20.0),
+          textInputAction: TextInputAction.next,
+          keyboardType: TextInputType.emailAddress,
+        );
+      },
+    );
+  }
+}
 
-        //password
+class PasswordInput extends StatelessWidget {
+  const PasswordInput({super.key});
 
-        CustomTextField(
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<LoginBloc, LoginState>(
+      builder: (context, state) {
+        return CustomTextField(
+          initialValue: state.password.value,
+          hintText: 'Enter your password',
+          label: 'Password',
+          errorText: state.password.displayError != null
+              ? 'Enter a valid password'
+              : null,
           icon: Icons.lock,
-          label: "Password",
-          isObscure: true,
-          errorText: '',
-          // errorText: loginAuth.password.error,
           onChange: (value) {
-            // loginAuth.setPassword(value);
+            context.read<LoginBloc>().add(PasswordChanged(password: value));
           },
+          isObscure: true,
+          textInputAction: TextInputAction.next,
+          keyboardType: TextInputType.visiblePassword,
+        );
+      },
+    );
+  }
+}
+
+class LoginButton extends StatelessWidget {
+  const LoginButton({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final isValid = context.select((LoginBloc bloc) => bloc.state.isValid);
+    return CustomButton(
+      title: 'Login',
+      onPressed: isValid ? () => context.read<LoginBloc>().add(Login()) : null,
+    );
+  }
+}
+
+class SuccessDialog extends StatelessWidget {
+  const SuccessDialog({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(8),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            Row(
+              children: <Widget>[
+                Icon(Icons.info),
+                Flexible(
+                  child: Padding(
+                    padding: EdgeInsets.all(10),
+                    child: Text(
+                      'Form Submitted Successfully!',
+                      softWrap: true,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            ElevatedButton(
+              child: const Text('OK'),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+          ],
         ),
-
-        const SizedBox(height: 50.0),
-
-        // login button
-
-        ElevatedButton(
-          onPressed: () {},
-          // !loginAuth.isValid()
-          //     ? null
-          //     : () async {
-          //         //implement sign in
-          //         await Provider.of<AuthService>(context, listen: false)
-          //             .signInWithEmailAndPassword(loginAuth.email.value,
-          //                 loginAuth.password.value, context);
-          //       },
-          child: const Text("Login"),
-        ),
-        Align(
-          alignment: Alignment.topLeft,
-          child: TextButton(
-              onPressed: () {
-                // Navigator.pushNamed(context, Routes.forgotPasswordRoute);
-              },
-              child: Text(
-                "Forgot password?",
-                style: Theme.of(context)
-                    .textTheme
-                    .bodyText1!
-                    .copyWith(color: Colors.black),
-              )),
-        ),
-
-        const SizedBox(height: 10.0),
-        // alternative sign in methods
-
-        Text(
-          "Or, login with...",
-        ),
-        // style: getRegularTextStyle(color: ColorManager.grey)),
-
-        const SizedBox(height: 20.0),
-
-        // Register Option
-
-        // HelperRichText(
-        //   message: "Don't have an account yet? ",
-        //   actionText: "Sign Up",
-        //   onTap: () {
-        //     // move to register screen
-        //     Navigator.pushNamedAndRemoveUntil(
-        //         context, Routes.registerRoute, (route) => false);
-        //   },
-        // ),
-      ],
+      ),
     );
   }
 }
