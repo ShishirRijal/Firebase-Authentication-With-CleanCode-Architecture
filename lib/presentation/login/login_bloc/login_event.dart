@@ -1,4 +1,4 @@
-part of 'login_bloc.dart';
+import 'package:equatable/equatable.dart';
 
 abstract class LoginEvent extends Equatable {
   const LoginEvent();
@@ -30,3 +30,5 @@ class PasswordChanged extends LoginEvent {
 }
 
 class PasswordUnfocused extends LoginEvent {}
+
+class Login extends LoginEvent {}
