@@ -46,7 +46,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     );
     if (state.isValid) {
       emit(state.copyWith(status: FormzSubmissionStatus.inProgress));
-      await Future<void>.delayed(const Duration(seconds: 1));
+      await Future<void>.delayed(const Duration(seconds: 4));
       emit(state.copyWith(status: FormzSubmissionStatus.success));
     }
   }

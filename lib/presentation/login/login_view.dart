@@ -1,4 +1,5 @@
 import 'package:clothing_store/presentation/resources/asset_manager.dart';
+import 'package:lottie/lottie.dart';
 
 import 'login_bloc/login_bloc.dart';
 import 'login_bloc/login_state.dart';
@@ -60,36 +61,41 @@ class _LoginFormState extends State<_LoginForm> {
     return BlocListener<LoginBloc, LoginState>(
       listener: (context, state) {
         if (state.status.isSuccess) {
-          ScaffoldMessenger.of(context).hideCurrentSnackBar();
+          Navigator.of(context).pop();
           showDialog<void>(
             context: context,
             builder: (_) => const SuccessDialog(),
           );
         }
         if (state.status.isInProgress) {
-          ScaffoldMessenger.of(context)
-            ..hideCurrentSnackBar()
-            ..showSnackBar(
-              const SnackBar(content: Text('Submitting...')),
-            );
+          showDialog<void>(
+            context: context,
+            builder: (_) => const LoadingPopUp(),
+          );
         }
       },
       child: Padding(
         padding: const EdgeInsets.all(8),
         child: Column(
-          children: const <Widget>[
-            Logo(),
-            SizedBox(height: 20.0),
-            _LoginText(),
-            SizedBox(height: 20.0),
-            EmailInput(),
-            SizedBox(height: 20.0),
-            PasswordInput(),
-            ForgotPassword(),
-            SizedBox(height: 50.0),
-            LoginButton(),
-            SizedBox(height: 30),
-            SignUp(),
+          children: <Widget>[
+            Image.asset(AssetManager.logo, height: 200),
+            const SizedBox(height: 20.0),
+            Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                "Login",
+                style: Theme.of(context).textTheme.headlineLarge,
+              ),
+            ),
+            const SizedBox(height: 20.0),
+            const EmailInput(),
+            const SizedBox(height: 20.0),
+            const PasswordInput(),
+            const ForgotPassword(),
+            const SizedBox(height: 50.0),
+            const LoginButton(),
+            const SizedBox(height: 30),
+            const SignUp(),
           ],
         ),
       ),
@@ -112,10 +118,7 @@ class ForgotPassword extends StatelessWidget {
           },
           child: Text(
             "Forgot password?",
-            style: Theme.of(context)
-                .textTheme
-                .bodyText1!
-                .copyWith(color: ColorManager.accent),
+            style: Theme.of(context).textTheme.labelLarge,
           )),
     );
   }
@@ -145,41 +148,6 @@ class SignUp extends StatelessWidget {
         ),
       ],
     ));
-  }
-}
-
-class Logo extends StatelessWidget {
-  const Logo({
-    Key? key,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      height: 200.0,
-      child: Image.asset(AssetManager.logo),
-      // child: LottieBuilder.asset(
-      //   AssetManager.logoJson,
-      //   fit: BoxFit.cover,
-      // ),
-    );
-  }
-}
-
-class _LoginText extends StatelessWidget {
-  const _LoginText({
-    Key? key,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Align(
-      alignment: Alignment.centerLeft,
-      child: Text(
-        "Login",
-        style: getBoldTextStyle(),
-      ),
-    );
   }
 }
 
@@ -263,7 +231,7 @@ class SuccessDialog extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             Row(
-              children: <Widget>[
+              children: const <Widget>[
                 Icon(Icons.info),
                 Flexible(
                   child: Padding(
@@ -280,6 +248,34 @@ class SuccessDialog extends StatelessWidget {
               child: const Text('OK'),
               onPressed: () => Navigator.of(context).pop(),
             ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class LoadingPopUp extends StatelessWidget {
+  const LoadingPopUp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(8),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            LottieBuilder.asset(
+              AssetManager.loading,
+              height: 150,
+              width: 150,
+              fit: BoxFit.fill,
+            ),
+            Text("Loading...", style: getRegularTextStyle()),
           ],
         ),
       ),
