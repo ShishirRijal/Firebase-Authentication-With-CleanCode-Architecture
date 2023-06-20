@@ -73,6 +73,12 @@ class _LoginFormState extends State<_LoginForm> {
             builder: (_) => const LoadingPopUp(),
           );
         }
+        if (state.status.isFailure) {
+          showDialog<void>(
+            context: context,
+            builder: (_) => const LoadingPopUp(),
+          );
+        }
       },
       child: Padding(
         padding: const EdgeInsets.all(8),
@@ -278,6 +284,23 @@ class LoadingPopUp extends StatelessWidget {
             Text("Loading...", style: getRegularTextStyle()),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class ErrorPopup extends StatelessWidget {
+  const ErrorPopup({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(8),
+        child: Text("Failed"),
       ),
     );
   }
