@@ -1,4 +1,5 @@
 import 'package:clothing_store/data/data.dart';
+import 'package:clothing_store/data/network/firebase_error_handler.dart';
 import 'package:clothing_store/domain/repositories/auth_respository.dart';
 import 'package:dartz/dartz.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -18,6 +19,11 @@ class AuthRepositoryImpl extends AuthRepository {
           password: password,
         );
         return const Right(null);
+      } on FirebaseAuthException catch (e) {
+        return Left(Failure(
+          400,
+          FirebaseLogInFailure.fromCode(e.code).message,
+        ));
       } catch (e) {
         return const Left(
             Failure(ResponseCode.UNKNOWN, ResponseMessage.UNKNOWN));
