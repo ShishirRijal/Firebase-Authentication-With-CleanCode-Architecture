@@ -14,5 +14,7 @@ ThemeData _theme = ThemeData(
 
     //* label
     labelLarge: getRegularTextStyle(color: ColorManager.accent),
+    // used for buttons
+    labelMedium: getSemiBoldTextStyle(color: ColorManager.white, size: 18),
   ),
 );
