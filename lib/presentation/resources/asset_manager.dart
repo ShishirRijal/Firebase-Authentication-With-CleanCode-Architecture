@@ -7,4 +7,7 @@ class AssetManager {
 
   // json
   static const loading = '$_jsonPath/loading.json';
+  static const empty = '$_jsonPath/empty.json';
+  static const error = '$_jsonPath/error.json';
+  static const success = '$_jsonPath/success.json';
 }
