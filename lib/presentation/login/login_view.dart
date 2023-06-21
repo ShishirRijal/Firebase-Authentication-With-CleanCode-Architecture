@@ -60,10 +60,8 @@ class _LoginFormState extends State<_LoginForm> {
       listener: (context, state) {
         if (state.status.isSuccess) {
           Navigator.of(context).pop();
-          showDialog<void>(
-            context: context,
-            builder: (_) => const SuccessDialog(),
-          );
+          ScaffoldMessenger.of(context)
+              .showSnackBar(getSuccessSnackbar(context));
         }
         if (state.status.isInProgress) {
           showDialog<void>(
@@ -74,9 +72,10 @@ class _LoginFormState extends State<_LoginForm> {
         if (state.status.isFailure) {
           Navigator.of(context).pop();
           showDialog<void>(
-            context: context,
-            builder: (_) => ErrorPopup(errorText: state.errorMessage),
-          );
+              context: context,
+              builder: (_) {
+                return ErrorPopup(errorText: state.errorMessage);
+              });
         }
       },
       child: Padding(
@@ -219,6 +218,14 @@ class LoginButton extends StatelessWidget {
       onPressed: isValid ? () => context.read<LoginBloc>().add(Login()) : null,
     );
   }
+}
+
+SnackBar getSuccessSnackbar(BuildContext context) {
+  return SnackBar(
+      duration: const Duration(seconds: 2),
+      backgroundColor: ColorManager.success,
+      content: Text("Login successfull!",
+          style: Theme.of(context).textTheme.labelMedium));
 }
 
 class SuccessDialog extends StatelessWidget {

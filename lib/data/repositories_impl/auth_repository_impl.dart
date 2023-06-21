@@ -20,8 +20,10 @@ class AuthRepositoryImpl extends AuthRepository {
         );
         return const Right(null);
       } on FirebaseAuthException catch (e) {
+        print(
+            "Firebase exception: ${e.code}, ${FirebaseLogInFailure.fromCode(e.code).message}");
         return Left(Failure(
-          400,
+          404,
           FirebaseLogInFailure.fromCode(e.code).message,
         ));
       } catch (e) {

@@ -52,8 +52,9 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       (await loginUseCase
               .call(LoginParams(email: email.value, password: password.value)))
           .fold(
-              (l) =>
-                  emit(state.copyWith(status: FormzSubmissionStatus.failure)),
+              (l) => emit(state.copyWith(
+                  status: FormzSubmissionStatus.failure,
+                  errorMessage: l.message)),
               (r) =>
                   emit(state.copyWith(status: FormzSubmissionStatus.success)));
     }
