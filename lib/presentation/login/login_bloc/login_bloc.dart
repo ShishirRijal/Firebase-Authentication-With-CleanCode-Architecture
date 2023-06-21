@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'package:clothing_store/core/di.dart';
+import 'package:clothing_store/domain/usecases/login_usecase.dart';
 import 'package:clothing_store/presentation/login/login_bloc/login_event.dart';
 import 'package:clothing_store/presentation/login/login_bloc/login_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -46,8 +48,14 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     );
     if (state.isValid) {
       emit(state.copyWith(status: FormzSubmissionStatus.inProgress));
-      await Future<void>.delayed(const Duration(seconds: 4));
-      emit(state.copyWith(status: FormzSubmissionStatus.success));
+      final LoginUseCase loginUseCase = getIt<LoginUseCase>();
+      (await loginUseCase
+              .call(LoginParams(email: email.value, password: password.value)))
+          .fold(
+              (l) =>
+                  emit(state.copyWith(status: FormzSubmissionStatus.failure)),
+              (r) =>
+                  emit(state.copyWith(status: FormzSubmissionStatus.success)));
     }
   }
 }

@@ -1,6 +1,4 @@
 import 'package:clothing_store/presentation/resources/asset_manager.dart';
-import 'package:lottie/lottie.dart';
-
 import 'login_bloc/login_bloc.dart';
 import 'login_bloc/login_state.dart';
 import '../resources/resources.dart';
@@ -70,13 +68,14 @@ class _LoginFormState extends State<_LoginForm> {
         if (state.status.isInProgress) {
           showDialog<void>(
             context: context,
-            builder: (_) => const LoadingPopUp(),
+            builder: (_) => const LoadingPopup(),
           );
         }
         if (state.status.isFailure) {
+          Navigator.of(context).pop();
           showDialog<void>(
             context: context,
-            builder: (_) => const LoadingPopUp(),
+            builder: (_) => ErrorPopup(errorText: state.errorMessage),
           );
         }
       },
@@ -227,81 +226,33 @@ class SuccessDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Dialog(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(8),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            Row(
-              children: const <Widget>[
-                Icon(Icons.info),
-                Flexible(
-                  child: Padding(
-                    padding: EdgeInsets.all(10),
-                    child: Text(
-                      'Form Submitted Successfully!',
-                      softWrap: true,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            ElevatedButton(
-              child: const Text('OK'),
-              onPressed: () => Navigator.of(context).pop(),
-            ),
-          ],
-        ),
-      ),
-    );
+    return SnackBar(
+        content: Text("Login successfull!",
+            style: Theme.of(context).textTheme.labelMedium));
   }
 }
 
-class LoadingPopUp extends StatelessWidget {
-  const LoadingPopUp({super.key});
+class LoadingPopup extends StatelessWidget {
+  const LoadingPopup({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Dialog(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(8),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            LottieBuilder.asset(
-              AssetManager.loading,
-              height: 150,
-              width: 150,
-              fit: BoxFit.fill,
-            ),
-            Text("Loading...", style: getRegularTextStyle()),
-          ],
-        ),
-      ),
-    );
+    return const CustomAlertPopup(
+        assetAddress: AssetManager.loading, text: 'Loading...');
   }
 }
 
 class ErrorPopup extends StatelessWidget {
-  const ErrorPopup({super.key});
+  const ErrorPopup({this.errorText, super.key});
+  final String? errorText;
 
   @override
   Widget build(BuildContext context) {
-    return Dialog(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(8),
-        child: Text("Failed"),
-      ),
+    return CustomAlertPopup(
+      assetAddress: AssetManager.error,
+      text: errorText ?? 'An unknown error occurred!',
+      showButton: true,
+      onPressed: () => Navigator.pop(context),
     );
   }
 }
