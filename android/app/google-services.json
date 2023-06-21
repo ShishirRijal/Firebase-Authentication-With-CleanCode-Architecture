@@ -1,0 +1,82 @@
+{
+  "project_info": {
+    "project_number": "296261998626",
+    "project_id": "clothing-store-1caad",
+    "storage_bucket": "clothing-store-1caad.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:296261998626:android:855f00c527ee0c85cfd27b",
+        "android_client_info": {
+          "package_name": "com.example.clothing_store"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "296261998626-a73f4le5a7asevj59glnopt2vhlvtghe.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAoPhhuN1U1GFjXtalBh4cf1xWUOxmOnK4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "296261998626-a73f4le5a7asevj59glnopt2vhlvtghe.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "296261998626-fqr2g3b0mrugi0r7or8g8gjd1lfi8v0a.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "np.com.shishirrijal"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:296261998626:android:9fe9218e1a92b350cfd27b",
+        "android_client_info": {
+          "package_name": "np.com.shishirrijal"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "296261998626-a73f4le5a7asevj59glnopt2vhlvtghe.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAoPhhuN1U1GFjXtalBh4cf1xWUOxmOnK4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "296261998626-a73f4le5a7asevj59glnopt2vhlvtghe.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "296261998626-fqr2g3b0mrugi0r7or8g8gjd1lfi8v0a.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "np.com.shishirrijal"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
