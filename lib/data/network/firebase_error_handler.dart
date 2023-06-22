@@ -1,11 +1,10 @@
+//! Firebase login error code handling
 class FirebaseLogInFailure implements Exception {
   final String message;
   const FirebaseLogInFailure([
     this.message = 'An unknown exception occurred.',
   ]);
 
-  /// Create an authentication message
-  /// from a firebase authentication exception code.
   factory FirebaseLogInFailure.fromCode(String code) {
     switch (code) {
       case 'invalid-email':
@@ -26,6 +25,40 @@ class FirebaseLogInFailure implements Exception {
         );
       default:
         return const FirebaseLogInFailure();
+    }
+  }
+}
+
+//! Firebase register error code handling
+class FirebaseSignUpFailure implements Exception {
+  final String message;
+  const FirebaseSignUpFailure([
+    this.message = 'An unknown exception occurred.',
+  ]);
+  factory FirebaseSignUpFailure.fromCode(String code) {
+    switch (code) {
+      case 'invalid-email':
+        return const FirebaseSignUpFailure(
+          'Email is not valid or badly formatted.',
+        );
+      case 'user-disabled':
+        return const FirebaseSignUpFailure(
+          'This user has been disabled. Please contact support for help.',
+        );
+      case 'email-already-in-use':
+        return const FirebaseSignUpFailure(
+          'An account already exists for that email.',
+        );
+      case 'operation-not-allowed':
+        return const FirebaseSignUpFailure(
+          'Operation is not allowed.  Please contact support.',
+        );
+      case 'weak-password':
+        return const FirebaseSignUpFailure(
+          'Please enter a stronger password.',
+        );
+      default:
+        return const FirebaseSignUpFailure();
     }
   }
 }
