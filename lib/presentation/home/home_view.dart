@@ -1,5 +1,4 @@
 import 'package:clothing_store/core/di.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import '../../domain/usecases/logout_usecase.dart';
