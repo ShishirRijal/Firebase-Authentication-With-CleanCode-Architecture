@@ -20,8 +20,6 @@ class AuthRepositoryImpl extends AuthRepository {
         );
         return const Right(null);
       } on FirebaseAuthException catch (e) {
-        print(
-            "Firebase exception: ${e.code}, ${FirebaseLogInFailure.fromCode(e.code).message}");
         return Left(Failure(
           404,
           FirebaseLogInFailure.fromCode(e.code).message,
@@ -39,9 +37,29 @@ class AuthRepositoryImpl extends AuthRepository {
   }
 
   @override
-  Future<void> register(String email, String password) {
-    // TODO: implement register
-    throw UnimplementedError();
+  Future<Either<Failure, void>> register(String email, String password) async {
+    if (await networkInfo.isConnected) {
+      try {
+        await firebaseAuth.createUserWithEmailAndPassword(
+          email: email,
+          password: password,
+        );
+        return const Right(null);
+      } on FirebaseAuthException catch (e) {
+        return Left(Failure(
+          404,
+          FirebaseLogInFailure.fromCode(e.code).message,
+        ));
+      } catch (e) {
+        return const Left(
+            Failure(ResponseCode.UNKNOWN, ResponseMessage.UNKNOWN));
+      }
+    } else {
+      return const Left(Failure(
+        ResponseCode.NO_INTERNET_CONNECTION,
+        ResponseMessage.NO_INTERNET_CONNECTION,
+      ));
+    }
   }
 
   @override
