@@ -69,8 +69,25 @@ class AuthRepositoryImpl extends AuthRepository {
   }
 
   @override
-  Future<void> logout() {
-    // TODO: implement logout
-    throw UnimplementedError();
+  Future<Either<Failure, void>> logout() async {
+    if (await networkInfo.isConnected) {
+      try {
+        await firebaseAuth.signOut();
+        return const Right(null);
+      } on FirebaseAuthException catch (e) {
+        return Left(Failure(
+          404,
+          FirebaseSignUpFailure.fromCode(e.code).message,
+        ));
+      } catch (e) {
+        return const Left(
+            Failure(ResponseCode.UNKNOWN, ResponseMessage.UNKNOWN));
+      }
+    } else {
+      return const Left(Failure(
+        ResponseCode.NO_INTERNET_CONNECTION,
+        ResponseMessage.NO_INTERNET_CONNECTION,
+      ));
+    }
   }
 }
