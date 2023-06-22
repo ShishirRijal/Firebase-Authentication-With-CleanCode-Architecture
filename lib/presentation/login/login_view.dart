@@ -1,3 +1,4 @@
+import 'package:clothing_store/presentation/forgot_password/forgot_password_view.dart';
 import 'package:clothing_store/presentation/resources/asset_manager.dart';
 import '../register/register_view.dart';
 import 'login_bloc/login_bloc.dart';
@@ -119,7 +120,10 @@ class ForgotPassword extends StatelessWidget {
       alignment: Alignment.topRight,
       child: TextButton(
           onPressed: () {
-            // Navigator.pushNamed(context, Routes.forgotPasswordRoute);
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => const ForgotPasswordView()));
           },
           child: Text(
             "Forgot password?",
