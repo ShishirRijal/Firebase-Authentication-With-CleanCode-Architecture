@@ -1,3 +1,4 @@
+import 'package:clothing_store/domain/usecases/forget_password_usecase.dart';
 import 'package:clothing_store/domain/usecases/logout_usecase.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get_it/get_it.dart';
@@ -25,7 +26,10 @@ Future<void> setup() async {
   // Register usecase
   getIt.registerLazySingleton<RegisterUseCase>(
       () => RegisterUseCase(authRepository: getIt()));
-  // Forgot password usecase
+  // Logout  usecase
   getIt.registerLazySingleton<LogoutUseCase>(
       () => LogoutUseCase(authRepository: getIt()));
+  // Forgot password usecase
+  getIt.registerLazySingleton<ForgetPasswordUseCase>(
+      () => ForgetPasswordUseCase(authRepository: getIt()));
 }
