@@ -3,9 +3,9 @@ import 'package:clothing_store/domain/repositories/respositories.dart';
 import 'package:dartz/dartz.dart';
 import 'package:clothing_store/data/failure/failure.dart';
 
-class LoginUseCase extends BaseUseCase<RegiseterParams, void> {
+class RegisterUseCase extends BaseUseCase<RegiseterParams, void> {
   AuthRepository authRepository;
-  LoginUseCase({required this.authRepository});
+  RegisterUseCase({required this.authRepository});
 
   @override
   Future<Either<Failure, void>> call(RegiseterParams params) async {
