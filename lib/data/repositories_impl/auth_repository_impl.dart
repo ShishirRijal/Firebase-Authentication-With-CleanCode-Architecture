@@ -90,4 +90,27 @@ class AuthRepositoryImpl extends AuthRepository {
       ));
     }
   }
+
+  @override
+  Future<Either<Failure, void>> forgetPassword(String email) async {
+    if (await networkInfo.isConnected) {
+      try {
+        await firebaseAuth.sendPasswordResetEmail(email: email);
+        return const Right(null);
+      } on FirebaseAuthException catch (e) {
+        return Left(Failure(
+          404,
+          FirebaseLogInFailure.fromCode(e.code).message,
+        ));
+      } catch (e) {
+        return const Left(
+            Failure(ResponseCode.UNKNOWN, ResponseMessage.UNKNOWN));
+      }
+    } else {
+      return const Left(Failure(
+        ResponseCode.NO_INTERNET_CONNECTION,
+        ResponseMessage.NO_INTERNET_CONNECTION,
+      ));
+    }
+  }
 }
