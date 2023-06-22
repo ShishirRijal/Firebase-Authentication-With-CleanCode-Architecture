@@ -1,35 +1,35 @@
 import 'package:clothing_store/presentation/resources/asset_manager.dart';
-import '../register/register_view.dart';
-import 'login_bloc/login_bloc.dart';
-import 'login_bloc/login_state.dart';
+import 'package:formz/formz.dart';
+
+import '../login/login_view.dart';
 import '../resources/resources.dart';
 import '../shared_widgets/shared_widgets.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:formz/formz.dart';
-import 'login_bloc/login_event.dart';
 
-class LoginView extends StatelessWidget {
-  const LoginView({super.key});
+import 'register_ bloc/register_bloc.dart';
+import 'register_ bloc/register_state.dart';
+
+class RegisterView extends StatelessWidget {
+  const RegisterView({super.key});
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => LoginBloc(),
+      create: (_) => RegisterBloc(),
       child: GestureDetector(
         onTap: () {
           // dismiss keyboard when touched outside the textfield
           FocusManager.instance.primaryFocus?.unfocus();
         },
-        child: Scaffold(
+        child: const Scaffold(
           backgroundColor: Colors.white,
           body: SafeArea(
             child: SingleChildScrollView(
               child: Padding(
-                padding: const EdgeInsets.symmetric(
-                    vertical: 40.0, horizontal: 20.0),
-                child: _LoginForm(),
+                padding: EdgeInsets.symmetric(vertical: 40.0, horizontal: 20.0),
+                child: RegisterForm(),
               ),
             ),
           ),
@@ -39,12 +39,14 @@ class LoginView extends StatelessWidget {
   }
 }
 
-class _LoginForm extends StatefulWidget {
+class RegisterForm extends StatefulWidget {
+  const RegisterForm({super.key});
+
   @override
-  State<_LoginForm> createState() => _LoginFormState();
+  State<RegisterForm> createState() => RegisterFormState();
 }
 
-class _LoginFormState extends State<_LoginForm> {
+class RegisterFormState extends State<RegisterForm> {
   @override
   void initState() {
     super.initState();
@@ -57,7 +59,7 @@ class _LoginFormState extends State<_LoginForm> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<LoginBloc, LoginState>(
+    return BlocListener<RegisterBloc, RegisterState>(
       listener: (context, state) {
         if (state.status.isSuccess) {
           Navigator.of(context).pop();
@@ -88,7 +90,7 @@ class _LoginFormState extends State<_LoginForm> {
             Align(
               alignment: Alignment.centerLeft,
               child: Text(
-                "Login",
+                "Sign Up",
                 style: Theme.of(context).textTheme.headlineLarge,
               ),
             ),
@@ -96,11 +98,10 @@ class _LoginFormState extends State<_LoginForm> {
             const EmailInput(),
             const SizedBox(height: 20.0),
             const PasswordInput(),
-            const ForgotPassword(),
             const SizedBox(height: 50.0),
             const LoginButton(),
             const SizedBox(height: 30),
-            const SignUp(),
+            const LoginText(),
           ],
         ),
       ),
@@ -108,29 +109,8 @@ class _LoginFormState extends State<_LoginForm> {
   }
 }
 
-class ForgotPassword extends StatelessWidget {
-  const ForgotPassword({
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Align(
-      alignment: Alignment.topRight,
-      child: TextButton(
-          onPressed: () {
-            // Navigator.pushNamed(context, Routes.forgotPasswordRoute);
-          },
-          child: Text(
-            "Forgot password?",
-            style: Theme.of(context).textTheme.labelLarge,
-          )),
-    );
-  }
-}
-
-class SignUp extends StatelessWidget {
-  const SignUp({
+class LoginText extends StatelessWidget {
+  const LoginText({
     super.key,
   });
 
@@ -140,19 +120,17 @@ class SignUp extends StatelessWidget {
         text: TextSpan(
       children: [
         TextSpan(
-          text: "Don't have an account yet? ",
+          text: "Already have an account? ",
           style: getRegularTextStyle(),
         ),
         TextSpan(
-          text: "Sign Up",
+          text: "Login",
           recognizer: TapGestureRecognizer()
             ..onTap = () {
-              Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const RegisterView()));
+              Navigator.pushReplacement(context,
+                  MaterialPageRoute(builder: (context) => const LoginView()));
             },
-          style: getRegularTextStyle(color: ColorManager.accent),
+          style: Theme.of(context).textTheme.labelLarge,
         ),
       ],
     ));
@@ -164,7 +142,7 @@ class EmailInput extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<LoginBloc, LoginState>(
+    return BlocBuilder<RegisterBloc, RegisterState>(
       builder: (context, state) {
         return CustomTextField(
           initialValue: state.email.value,
@@ -174,7 +152,7 @@ class EmailInput extends StatelessWidget {
               state.email.displayError != null ? 'Enter a valid email' : null,
           icon: Icons.email,
           onChange: (value) {
-            context.read<LoginBloc>().add(EmailChanged(email: value));
+            context.read<RegisterBloc>().add(EmailChanged(email: value));
           },
           textInputAction: TextInputAction.next,
           keyboardType: TextInputType.emailAddress,
@@ -189,7 +167,7 @@ class PasswordInput extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<LoginBloc, LoginState>(
+    return BlocBuilder<RegisterBloc, RegisterState>(
       builder: (context, state) {
         return CustomTextField(
           initialValue: state.password.value,
@@ -200,7 +178,7 @@ class PasswordInput extends StatelessWidget {
               : null,
           icon: Icons.lock,
           onChange: (value) {
-            context.read<LoginBloc>().add(PasswordChanged(password: value));
+            context.read<RegisterBloc>().add(PasswordChanged(password: value));
           },
           isObscure: true,
           textInputAction: TextInputAction.next,
@@ -216,10 +194,11 @@ class LoginButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isValid = context.select((LoginBloc bloc) => bloc.state.isValid);
+    final isValid = context.select((RegisterBloc bloc) => bloc.state.isValid);
     return CustomButton(
-      title: 'Login',
-      onPressed: isValid ? () => context.read<LoginBloc>().add(Login()) : null,
+      title: 'Sign Up',
+      onPressed:
+          isValid ? () => context.read<RegisterBloc>().add(Register()) : null,
     );
   }
 }
